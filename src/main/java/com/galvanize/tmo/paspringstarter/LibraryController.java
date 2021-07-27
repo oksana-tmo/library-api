@@ -4,18 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class LibraryController {
-
-    @Autowired
-    Library library;
+    private Books library = new Books();
 
     @GetMapping("/health")
     public String health() {
@@ -27,15 +23,17 @@ public class LibraryController {
     @ResponseStatus(HttpStatus.CREATED)
     public Book addToLibrary(@RequestBody Book book){
         if (book != null){
-            Book savedBook = library.save(book);
-            return savedBook;
+            return library.addBook(book);
         }
         return null;
     }
 
     @GetMapping(value = "/api/books")
     public String getAllBooks() {
-        List<Book> books = library.findByOrderByTitleAsc();
+
+        List<Book> books = new ArrayList<>();
+        books.addAll(library.getAllBooks());
+        Collections.sort(books);
         return createLibraryPayload(books);
     }
 
@@ -45,7 +43,7 @@ public class LibraryController {
         library.deleteAll();
     }
 
-    private String createLibraryPayload(List<Book> bookList){
+    private String createLibraryPayload(Collection<Book> bookList){
         ObjectMapper objectMapper = new ObjectMapper();
 
         ObjectNode books  = objectMapper.createObjectNode();

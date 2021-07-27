@@ -1,15 +1,10 @@
 package com.galvanize.tmo.paspringstarter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
 import java.util.Objects;
 
-@Entity
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
+public class Book implements Comparable<Book> {
     private Long id;
     private String author;
     private String title;
@@ -38,6 +33,10 @@ public class Book {
         return datePublished;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -56,5 +55,10 @@ public class Book {
     @Override
     public int hashCode() {
         return Objects.hash(id, author, title, datePublished);
+    }
+
+    @Override
+    public int compareTo(Book o) {
+        return this.getTitle().compareTo(o.getTitle());
     }
 }
